@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  node1:
+    build: ./node
+    ports:
+      - "5001:5000"
+    environment:
+      - NODE_ID=1
+  node2:
+    build: ./node
+    ports:
+      - "5002:5000"
+    environment:
+      - NODE_ID=2
+  node3:
+    build: ./node
+    ports:
+      - "5003:5000"
+    environment:
+      - NODE_ID=3
+  node4:
+    build: ./node
+    ports:
+      - "5004:5000"
+    environment:
+      - NODE_ID=4
+networks:
+  default:
+    driver: bridge
