@@ -1,41 +1,28 @@
 # distributed-bellman-ford-simulation
 
-This project is a distributed simulation of the Bellman-Ford algorithm, designed for CSS324 Network Computing. It demonstrates how nodes in a distributed system work collaboratively to compute the shortest path in a network. The system uses Docker to simulate a distributed environment where each node is represented by a container.
+This project demonstrates the Distributed Bellman-Ford Algorithm in a simulated distributed network environment using Docker. Each node in the network runs as a separate Docker container, communicating with its neighbors to collaboratively compute the shortest paths in the graph.
 
-## Objective
+This project was created for CSS324: Network Computing.
 
-The objective of this project is to:
+## Features
 
-1. Demonstrate the concept of the Distributed Bellman-Ford algorithm.
-2. Show how nodes communicate dynamically in a distributed network to compute shortest paths.
-3. Provide an interactive and modular setup using Docker and Flask.
+- Simulates a distributed system with multiple nodes (containers).
+- Implements the Bellman-Ford algorithm for finding shortest paths in a network.
+- Uses Flask for inter-node communication via REST APIs.
+- Modular design for customizing the graph structure.
+- Visualizes the process of convergence through logs and API responses.
 
 ## Project Structure
 
 ```bash
 distributed-bellman-ford/
-├── docker-compose.yml       # Configures and orchestrates the containers for the nodes
+├── docker-compose.yml       # Configures and orchestrates containers
 ├── node/
-│   ├── Dockerfile           # Specifies the node container configuration
-│   ├── app.py               # Node logic and REST API for communication
-│   ├── graph.json           # Defines the network graph structure
+│   ├── Dockerfile           # Docker configuration for each node
+│   ├── app.py               # Node logic and REST API
+│   ├── graph.json           # Graph structure with neighbors and weights
 │   └── requirements.txt     # Python dependencies
 ```
-
-## How It Works
-
-1. Graph Definition:
-    - The graph is defined in graph.json, specifying each node's neighbors and edge weights.
-
-2. Node Containers:
-    - Each node in the graph runs as a separate Docker container.
-    - Nodes communicate with their neighbors using a REST API implemented in Flask.
-
-3. Algorithm Flow:
-    - Each node initializes its shortest path distance to infinity, except for the source node (distance = 0).
-    - Periodically, each node sends its distance updates to its neighbors.
-    - Nodes update their distance values if they receive shorter paths from their neighbors.
-    - The process continues until all nodes converge (no updates occur).
 
 ## Technologies Used
 
@@ -44,55 +31,101 @@ distributed-bellman-ford/
 - Docker: To create isolated environments for each node.
 - Docker Compose: To manage and orchestrate multiple containers.
 
+## How It Works
+
+1. Graph Setup:
+    - The graph is defined in graph.json, specifying each node's neighbors and edge weights.
+
+2. Node Behavior:
+    - Each node runs as a Docker container.
+    - Nodes send their current shortest distance estimates to neighbors periodically.
+    - If a shorter path is found, the node updates its distance and informs its neighbors.
+
+3. Algorithm Execution:
+    - Each node initializes its shortest path distance to infinity, except for the source node (distance = 0).
+    - Periodically, each node sends its distance updates to its neighbors.
+    - Nodes update their distance values if they receive shorter paths from their neighbors.
+    - The process continues until all nodes converge (no updates occur).
+
 ## Setup and Execution
 
 ### Prerequisites
 
-- Install Docker and Docker Compose on your machine.
+- Docker and Docker Compose installed on your system.
 
 ### Steps
 
 1. Clone the Repository:
 
-```bash
-git clone https://github.com/DRepresser/distributed-bellman-ford-simulation.git
-cd distributed-bellman-ford
-```
+    ```bash
+    git clone https://github.com/DRepresser/distributed-bellman-ford-simulation.git
+    cd distributed-bellman-ford
+    ```
 
 2. Build and Start the Containers:
 
-```bash
-docker-compose up --build
-```
+    ```bash
+    docker-compose up --build
+    ```
 
-3. View Logs:
-    - Observe the inter-node communication in the terminal logs.
-    - Logs show distance updates and convergence of the algorithm.
+3. Access the node APIs:
+    - Check the distances at any node using:
+      ```bash
+      http://localhost:5001/distances
+      http://localhost:5002/distances
+      ```
+    - Replace 5001 with the appropriate port for other nodes (5002, 5003, etc.).
 
-4. Stop the Simulation:
+4. Stop the containers:
 
-```bash
-docker-compose down
-```
+    ```bash
+    docker-compose down
+    ```
 
 ## Customizing the Graph
 
-- Update the node/graph.json file to define your custom graph.
-- Example:
+1. Open node/graph.json and define your graph.
 
-```json
-{
-  "nodes": {
-    "1": {"neighbors": {"2": 1, "3": 4}},
-    "2": {"neighbors": {"3": 2, "4": 6}},
-    "3": {"neighbors": {"4": 3}},
-    "4": {"neighbors": {}}
+    Example:
+
+    ```json
+    {
+      "nodes": {
+        "1": {"neighbors": {"2": 1, "3": 4}},
+        "2": {"neighbors": {"3": 2, "4": 6}},
+        "3": {"neighbors": {"4": 3}},
+        "4": {"neighbors": {}}
+      }
+    }
+    ```
+
+- Rebuild and restart the containers:
+
+  ```bash
+  docker-compose up --build
+  ```
+
+## Endpoints
+
+- GET /distances:
+  
+  Returns the current shortest distances from the node to all other nodes.
+
+  ```bash
+  curl http://localhost:5001/distances
+  ```
+
+  Example Response:
+
+  ```json
+  {
+    "1": 0,
+    "2": 1,
+    "3": 3,
+    "4": 6
   }
-}
-```
+  ```
 
-- Rebuild and start the containers:
+- POST /update:
 
-```bash
-docker-compose up --build
-```
+  Internal endpoint for nodes to receive distance updates from neighbors.
