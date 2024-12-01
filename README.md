@@ -59,7 +59,7 @@ distributed-bellman-ford/
 
     ```bash
     git clone https://github.com/DRepresser/distributed-bellman-ford-simulation.git
-    cd distributed-bellman-ford
+    cd distributed-bellman-ford-simulation
     ```
 
 2. Build and Start the Containers:
