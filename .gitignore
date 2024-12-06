@@ -11,9 +11,6 @@ env/
 # Logs directory
 logs/
 
-# Docker files
-docker-compose.yml
-
 # Generated files
 *.json
 *.png
