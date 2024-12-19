@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Input number of nodes
 if [ -z "$1" ]; then
   echo "Usage: $0 <number_of_nodes>"
   exit 1
